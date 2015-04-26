@@ -1,0 +1,72 @@
+---
+title: "Machine_Learning_Project"
+output: html_document
+---
+
+##Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset)
+
+
+## Step 1: Data Processing
+
+Load the data
+
+```{r, results='hide', message=FALSE, warning=FALSE}
+library(dplyr)
+library(RCurl)
+library(caret)
+library(randomForest)
+set.seed(1141)
+train_link <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+test_link <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+training <- read.csv(text=getURL(train_link), na.strings=c(NA,"", "NA","#DIV/0!"), stringsAsFactors = FALSE)
+testing <- read.csv(text=getURL(test_link), na.strings=c(NA,"", "NA","#DIV/0!"), stringsAsFactors = FALSE)
+```
+
+
+Remove the variables that do not influence on the correct performance of the exercises, and the columns that have missing values. 
+
+
+```{r}
+train2 <- subset(training, select = -c(X, user_name, raw_timestamp_part_1, raw_timestamp_part_2, cvtd_timestamp, new_window, num_window))
+train2 <- train2[ , ! apply(train2 ,2 ,function(x) any(is.na(x)) ) ]
+```
+
+
+
+## Step 2: Predictive Model 
+Fit two models, a decision tree and a random forest model, and compare their perfomance against the testing set. 
+Build the final model and train against the training set.
+
+```{r}
+# Getting memory errors when attempting to run in RStudio, but R standalone works fine. 
+# Can't knit in R Standalone.
+#fit1 <- train(train2$classe ~ .,method="rpart",preProcess="pca",data=train2)
+#fit2 <- train(train2$classe ~ .,method="rf",preProcess="pca",data=train2)
+
+#predict_test_rpart = predict(fit1, testing)
+#predict_test_rf = predict(fit2, testing)
+
+```
+
+## Step 3: Build a confusion matrix to evaluate the performance of the two models
+```{r}
+#confusionMatrix(testing$classe, predict_test_rpart)
+#confusionMatrix(testing$classe, predict_test_rf)
+```
+
+
+## Step 4: Write files to submit for grading 
+```{r}
+#pml_write_files = function(x){
+#n = length(x)
+#for(i in 1:n){
+#  filename = paste0("problem_id_",i,".txt")
+#  write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+#}
+#}
+
+#pml_write_files(predict_test_rf)
+```
+
